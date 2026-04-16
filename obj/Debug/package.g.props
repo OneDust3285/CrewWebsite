@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <PackageJsonName Condition="$(PackageJsonName) == ''">crewwebsite</PackageJsonName>
+    <PackageJsonVersion Condition="$(PackageJsonVersion) == ''">1.0.0</PackageJsonVersion>
+    <PackageJsonDescription Condition="$(PackageJsonDescription) == ''">Crew 1548's official website!</PackageJsonDescription>
+    <PackageJsonLicense Condition="$(PackageJsonLicense) == ''">MIT</PackageJsonLicense>
+    <PackageJsonAuthor Condition="$(PackageJsonAuthor) == ''">Nolan Coleman: Webmaster</PackageJsonAuthor>
+    <PackageJsonType Condition="$(PackageJsonType) == ''">commonjs</PackageJsonType>
+    <PackageJsonMain Condition="$(PackageJsonMain) == ''">index.js</PackageJsonMain>
+    <PackageJsonScriptsTest Condition="$(PackageJsonScriptsTest) == ''">echo "Error: no test specified" &amp;&amp; exit 1</PackageJsonScriptsTest>
+    <PackageJsonDependenciesEjs Condition="$(PackageJsonDependenciesEjs) == ''">^5.0.1</PackageJsonDependenciesEjs>
+    <PackageJsonDependenciesExpress Condition="$(PackageJsonDependenciesExpress) == ''">^5.2.1</PackageJsonDependenciesExpress>
+    <PackageJsonDependenciesLocaltunnel Condition="$(PackageJsonDependenciesLocaltunnel) == ''">^2.0.2</PackageJsonDependenciesLocaltunnel>
+  </PropertyGroup>
+</Project>

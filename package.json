@@ -1,0 +1,17 @@
+{
+  "name": "crewwebsite",
+  "version": "0.1.0",
+  "description": "Crew 1548's official website!",
+  "license": "MIT",
+  "author": "Nolan Coleman: Webmaster",
+  "type": "commonjs",
+  "main": "index.js",
+  "dependencies": {
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "fs": "^0.0.1-security",
+    "localtunnel": "^2.0.2",
+    "session": "^0.1.0"
+  }
+}

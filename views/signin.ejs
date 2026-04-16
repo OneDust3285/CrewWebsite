@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREW 1548</title>
+    <link rel="stylesheet" href="/index.css" />
+</head>
+<body>
+    <%- include('./partials/header') %>
+    <div class='page' style="background-image:url('/assets/default_background.jpg');">
+        <h1>PLEASE SIGN IN!</h1>
+        <form action="/signin" method="POST">
+            <input type="text" name="username" placeholder="Username" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit">Sign In</button>
+        </form>
+        <a href="/newaccount">Don't have an account? Create one here!</a>
+    </div>
+</body>
+</html>
