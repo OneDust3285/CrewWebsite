@@ -187,9 +187,10 @@ app.post('/newevent', isAuthenticated, async (req, res) => {
 app.post('/updateuser', isAuthenticated, async (req, res) => {
     try {
         const oldInfo = await GetUserInfoById(req.params.id);
-        if (!oldInfo) {
-            return res.status(404).send('User not found');
-        }
+        //if (!oldInfo) {
+        //    console.error('User not found for update');
+        //    return res.status(404).redirect('/404');
+        //}
         const { email, content } = req.body;
         const data = await ReadJSON(dataFile);
         const userIndex = data.findIndex(u => u.id === String(req.session.userId));
