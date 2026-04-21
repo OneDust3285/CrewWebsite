@@ -14,8 +14,10 @@
             <% if (isOwner) { %>
                 <p> Private Dashbord </p>
                 <form action="/updateuser" method="POST">
-                    <input type="email" name="email" placeholder="Email"/>
-                    <textarea name="content" placeholder="Type your description of yourself here!" maxlength="100"></textarea>
+                    <input type="email" name="email" placeholder=<%= userData.email ? userData.email : "Email" %>>
+                    <br />
+                    <textarea name="content" placeholder="Type your description of yourself here!" maxlength="100"><%= userData.content ? userData.content : "" %></textarea>
+                    <br />
                     <button type="submit">Update Profile</button>
                     <p style="color: red;">Max Charactor limit of 100</p>
                 </form>

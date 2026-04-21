@@ -61,19 +61,26 @@ async function CompareUserSignIn(username, password) {
         const userData = await ReadJSON(dataFile);
         if (!userData) return false;
         if (!Array.isArray(userData)) return false;
+        console.log('User data loaded for sign-in comparison:', userData);
         const user = userData.find(u => u.user === username && u.password === password);
-        return !!user;
+        console.log('Comparing user sign-in:', { username, password, foundUser: user });
+        if (user) {
+            const logInSuccess = (user.password === password && user.user === username);
+            console.log('Login success:', logInSuccess);
+            return logInSuccess;
+        }
+        return false;
     } catch (err) {
         console.error('Error comparing user sign-in:', err);
         return false;
     }
 
 }
-async function WriteUserData(username, password, firstName, lastName) {
+async function WriteUserData(username, password, firstName, lastName, email) {
     try {
         const data = await ReadJSON(dataFile) || [];
         const id = String(data.length + 1);
-        data.push({ id, username, password, firstName, lastName, email: "", content: "" });
+        data.push({ id, user: username, password, firstName, lastName, email, content: "" });
         await writeJson(dataFile, data);
     } catch (err) {
         console.error('Error writing user data:', err);
@@ -93,6 +100,18 @@ async function GetEventInfoById(id, allOrNot) {
     }
     return event;
 }
+async function updateUserInfo(id, updatedData) {
+    const data = await ReadJSON(dataFile);
+    const userIndex = data.findIndex(u => u.id === String(id));
+    if (userIndex !== -1) {
+        data[userIndex] = { ...data[userIndex], ...updatedData };
+        await writeJson(dataFile, data);
+        return true;
+    } else {
+        console.error('User not found for update');
+        return false;
+    }
+}
 async function GetUserInfoById(id) {
     const data = await ReadJSON(dataFile);
     return data.find(u => u.id === String(id));
@@ -102,7 +121,7 @@ app.get('/futurevents', isAuthenticated, async (req, res) => {
     const userId = (req.session && req.session.userId) ? req.session.userId : null;
     const events = await GetEventInfoById(null, true);
     const id = req.params.id;
-    const userData = GetUserInfoById(id);
+    const userData = await GetUserInfoById(id);
     res.render('futurevents', { events: events, userId: userId, userData: userData });
 });
 app.get('/venturing', (req, res) => res.render('venturing'));
@@ -148,8 +167,9 @@ app.post('/register', async (req, res) => {
     const password = req.body.password;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
+    const email = req.body.email;
     try {
-        await WriteUserData(username, password, firstName, lastName);
+        await WriteUserData(username, password, firstName, lastName, email);
         return res.redirect('/signin');
     } catch (err) {
         console.error('Registration error:', err);
@@ -162,8 +182,10 @@ app.post('/signin', async (req, res) => {
     if (isValid) {
         req.session.userId = username;
         req.session.isLoggedIn = true;
+        console.log('User signed in successfully');
         return res.redirect('/');
     } else {
+        console.log('Invalid username or password');
         return res.redirect('/signin');
     }
 });
@@ -186,20 +208,28 @@ app.post('/newevent', isAuthenticated, async (req, res) => {
 });
 app.post('/updateuser', isAuthenticated, async (req, res) => {
     try {
-        const oldInfo = await GetUserInfoById(req.params.id);
-        //if (!oldInfo) {
-        //    console.error('User not found for update');
-        //    return res.status(404).redirect('/404');
-        //}
-        const { email, content } = req.body;
-        const data = await ReadJSON(dataFile);
-        const userIndex = data.findIndex(u => u.id === String(req.session.userId));
-        if (userIndex !== -1) {
-            data[userIndex].email = email;
-            data[userIndex].content = content;
-            await writeJson(dataFile, data);
+        const sessionUser = (req.session && req.session.userId) ? req.session.userId : null;
+        const userid = await ReadJSON(dataFile);
+        const userData = userid.find(u => u.user === sessionUser);
+        if (!userData) {
+            console.error('User not found in data file');
+            return res.status(404).redirect('/404');
         }
-        res.redirect(`/userpage/${req.session.userId}`);
+        const oldInfo = await GetUserInfoById(userData.id);
+        console.log('Updating user info for userId:', userData.id);
+        console.log('data before update:', userData);
+        console.log('oldInfo:', oldInfo);
+        if (!oldInfo) {
+            console.error('User not found for update');
+            return res.status(404).redirect('/404');
+        }
+        const { email, content } = req.body;
+        const updateResult = await updateUserInfo(userData.id, { email, content });
+        if (!updateResult) {
+            console.error('Failed to update user info');
+            return res.status(500).redirect('/userpage/' + userData.id);
+        }
+        res.redirect(`/userpage/${userData.id}`);
     } catch (err) {
         console.log(err);
     }
